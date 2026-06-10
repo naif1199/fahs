@@ -1,32 +1,33 @@
 "use client";
 
 import Image from "next/image";
+import { ShieldCheck } from "lucide-react";
 import { LoginForm } from "@/components/login-form";
-
-const videoUrl = "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260406_094145_4a271a6c-3869-4f1c-8aa7-aeb0cb227994.mp4";
 
 export function AdminLoginHero({ className = "" }: { className?: string }) {
   return (
-    <main className={`relative grid h-screen min-h-screen place-items-center overflow-hidden bg-black text-white ${className}`} dir="rtl">
-      <video className="fixed inset-0 z-0 h-full w-full object-cover" src={videoUrl} autoPlay muted loop playsInline />
-      <div className="bottom-blur-mask pointer-events-none fixed inset-0 z-[1] backdrop-blur-xl" />
-      <div className="pointer-events-none fixed inset-0 z-[2] bg-black/18" />
-
-      <section className="relative z-10 w-full max-w-3xl px-5">
-        <div className="animate-blur-fade-up rounded-[36px] border border-white/18 bg-white/[0.075] p-6 shadow-[0_32px_110px_rgba(0,0,0,.38)] backdrop-blur-md sm:p-8 md:p-10" style={{ animationDelay: "0ms" }}>
-          <div className="mx-auto mb-8 max-w-2xl rounded-[30px] border border-white/16 bg-white/18 px-6 py-7 shadow-[inset_0_1px_1px_rgba(255,255,255,.22),0_22px_70px_rgba(0,0,0,.28)] backdrop-blur-xl md:px-10 md:py-9">
-            <Image
-              src="/logo-mark.png"
-              alt="شعار الفاحص الذكي"
-              width={900}
-              height={300}
-              priority
-              className="mx-auto h-auto w-full max-w-[620px] object-contain drop-shadow-[0_12px_28px_rgba(0,0,0,.45)]"
-            />
+    <main className={`grid min-h-screen place-items-center bg-[radial-gradient(circle_at_16%_12%,rgba(200,178,122,.14),transparent_24rem),radial-gradient(circle_at_84%_0%,rgba(15,95,92,.12),transparent_28rem),linear-gradient(135deg,#F8FAF8,#EEF4F2)] p-5 text-official ${className}`} dir="rtl">
+      <section className="grid w-full max-w-5xl overflow-hidden rounded-2xl border border-security/10 bg-white shadow-[0_24px_70px_rgba(18,48,71,.10)] lg:grid-cols-[1fr_420px]">
+        <div className="flex min-h-[520px] flex-col justify-between bg-soft p-8 lg:p-10">
+          <div>
+            <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-security/15 bg-white px-3 py-1.5 text-sm font-bold text-security">
+              <ShieldCheck className="h-4 w-4" /> منصة تفتيش أمنية
+            </div>
+            <Image src="/logo-mark.png" alt="شعار الفاحص الذكي" width={620} height={220} priority className="h-auto w-full max-w-xl object-contain" />
           </div>
-
-          <div className="mx-auto max-w-md">
-            <LoginForm cinematic />
+          <div>
+            <h1 className="text-2xl font-black text-official">الفاحص الذكي</h1>
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-muted">أداة التفتيش الأمنية الذكية لإدارة روابط الفحص، نماذج التقييم، التقارير، وسجل التدقيق ضمن تجربة رسمية هادئة ومهيأة للاستخدام اليومي.</p>
+          </div>
+        </div>
+        <div className="flex items-center p-6 lg:p-8">
+          <div className="w-full">
+            <div className="mb-6">
+              <p className="text-sm font-bold text-security">دخول الإدارة</p>
+              <h2 className="mt-1 text-xl font-black text-official">لوحة تحكم النظام</h2>
+              <p className="mt-2 text-sm leading-7 text-muted">أدخل رمز مدير النظام للمتابعة إلى لوحة التحكم.</p>
+            </div>
+            <LoginForm />
           </div>
         </div>
       </section>
