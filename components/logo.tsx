@@ -1,6 +1,21 @@
 import Image from "next/image";
 
-export function Logo({ compact = false }: { compact?: boolean }) {
+export function Logo({ compact = false, hero = false }: { compact?: boolean; hero?: boolean }) {
+  if (hero) {
+    return (
+      <div className="flex justify-center">
+        <Image
+          src="/logo-mark.png"
+          alt="شعار الفاحص الذكي"
+          width={520}
+          height={180}
+          className="h-auto w-full max-w-[360px] object-contain md:max-w-[440px]"
+          priority
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="flex items-center gap-3">
       <div className="relative grid h-12 w-12 place-items-center rounded-2xl bg-white shadow-soft ring-1 ring-security/10">
