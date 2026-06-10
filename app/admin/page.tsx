@@ -1,5 +1,5 @@
 import { Activity, AlertTriangle, CheckCircle2, ClipboardList, FileText, Percent, Timer, Users } from "lucide-react";
-import { Card, StatCard } from "@/components/ui";
+import { Button, Card, StatCard } from "@/components/ui";
 import { BarsChart, DonutChart } from "@/components/charts";
 import { prisma } from "@/lib/prisma";
 import { taskStatusLabel } from "@/lib/format";
@@ -9,7 +9,7 @@ export default async function AdminDashboard() {
     prisma.inspector.count(),
     prisma.inspectionWeek.count({ where: { status: "ACTIVE" } }),
     prisma.inspectionTask.count(),
-    prisma.report.findMany({ include: { task: { include: { link: { include: { inspector: true } } } }, facility: { include: { facilityType: true } } } }),
+    prisma.report.findMany({ include: { task: { include: { link: { include: { inspector: true } } } }, facility: { include: { facilityType: true } } }, orderBy: { createdAt: "desc" } }),
     prisma.observation.count(),
     prisma.inspectionResponse.count({ where: { evaluationStatus: "NON_COMPLIANT", checklistItem: { importance: "HIGH" } } }),
     prisma.inspectionTask.groupBy({ by: ["status"], _count: true }),
@@ -21,6 +21,7 @@ export default async function AdminDashboard() {
   const inProgress = await prisma.inspectionTask.count({ where: { status: "IN_PROGRESS" } });
   const late = await prisma.inspectionTask.count({ where: { status: "LATE" } });
   const avg = reports.length ? reports.reduce((sum, r) => sum + r.complianceRate, 0) / reports.length : 0;
+  const latestReport = reports[0];
 
   return (
     <div className="space-y-6">
@@ -35,6 +36,20 @@ export default async function AdminDashboard() {
           <Mini label="المطابقة" value={`${Math.round(avg)}%`} icon={Percent} />
         </div>
       </div>
+
+      <Card className="border-security/15 bg-gradient-to-l from-security/5 to-white">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="text-sm font-bold text-security">الأمر الرئيسي</p>
+            <h2 className="mt-1 text-lg font-black text-official">توليد رابط تقرير الفاحص</h2>
+            <p className="mt-2 text-sm leading-7 text-muted">افتح صفحة التقارير لاختيار التقرير المطلوب، ثم استخدم رابط التقرير الرسمي أو تصدير PDF مباشرة.</p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <Button href="/admin/reports">إدارة روابط التقارير</Button>
+            {latestReport ? <Button href={`/reports/${latestReport.id}`}>فتح آخر تقرير</Button> : null}
+          </div>
+        </div>
+      </Card>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         <StatCard label="عدد الفاحصين" value={inspectors} />
