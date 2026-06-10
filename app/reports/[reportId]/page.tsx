@@ -28,7 +28,9 @@ export default async function ReportPage({ params }: { params: Promise<{ reportI
   });
   if (!report) notFound();
 
-  const inspector = report.task.link.inspector;
+  const task = report.task;
+  const link = task?.link;
+  const inspector = link?.inspector;
   const facility = report.facility;
   const totalItems = report.compliantCount + report.nonCompliantCount;
   const results = report.observations;
@@ -75,9 +77,9 @@ export default async function ReportPage({ params }: { params: Promise<{ reportI
             <Info label="نوع المنشأة" value={facility?.facilityType.name ?? facility?.classification} />
             <Info label="تاريخ الزيارة" value={arDate(facility?.visitDate)} />
             <Info label="وقت الزيارة" value={`${facility?.startedAt ?? "غير متوفر"} - ${facility?.endedAt ?? "غير متوفر"}`} />
-            <Info label="أسبوع الفحص" value={report.task.link.week.name} />
-            <Info label="اسم الفاحص" value={inspector.name} />
-            <Info label="الرقم الوظيفي" value={inspector.employeeNumber} />
+            <Info label="أسبوع الفحص" value={link?.week?.name} />
+            <Info label="اسم الفاحص" value={inspector?.name} />
+            <Info label="الرقم الوظيفي" value={inspector?.employeeNumber} />
             <Info label="تاريخ توليد التقرير" value={arDateTime(GENERATED_AT)} />
           </div>
         </section>
@@ -91,15 +93,8 @@ export default async function ReportPage({ params }: { params: Promise<{ reportI
                 return (
                   <article key={observation.id} className="result-card">
                     <div className="result-head">
-                      <div>
-                        <span>البند {item.itemNumber}</span>
-                        <h2>{item.mainSection}</h2>
-                        <p>{item.subCategory}</p>
-                      </div>
-                      <div className="badges">
-                        <b className="status-badge">غير مطابق</b>
-                        <b className={`importance-badge ${importanceClass(item.importance)}`}>{importanceLabel(item.importance)}</b>
-                      </div>
+                      <div><span>البند {item.itemNumber}</span><h2>{item.mainSection}</h2><p>{item.subCategory}</p></div>
+                      <div className="badges"><b className="status-badge">غير مطابق</b><b className={`importance-badge ${importanceClass(item.importance)}`}>{importanceLabel(item.importance)}</b></div>
                     </div>
                     <div className="field-box requirement"><span>نص المتطلب</span><p>{item.requirementText}</p></div>
                     <div className="two-columns">
