@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { BarChart3, CalendarDays, FileText, ListChecks, ScrollText, Settings, ShieldCheck, Users } from "lucide-react";
+import { BarChart3, CalendarDays, FileText, Gauge, ListChecks, ScrollText, Settings, ShieldCheck, Users } from "lucide-react";
 import { logoutAdmin } from "@/app/actions";
 import { Logo } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -10,6 +10,7 @@ const nav = [
   ["لوحة التحكم", "/admin", BarChart3],
   ["الفاحصون", "/admin/inspectors", Users],
   ["روابط نموذج الفاحص", "/admin/weeks", CalendarDays],
+  ["مؤشرات أداء الفاحصين", "/admin/performance", Gauge],
   ["التقارير", "/admin/reports", FileText],
   ["سجل التدقيق", "/admin/audit", ScrollText],
   ["المعايير", "/admin/criteria", ListChecks],
