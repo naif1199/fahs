@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
-import { Mail, RefreshCw, ShieldCheck } from "lucide-react";
+import { ExternalLink, Mail, RefreshCw } from "lucide-react";
 import { regenerateCode, saveWeek, toggleLink } from "@/app/actions";
-import { Badge, Button, Card, Field, SecondaryButton, inputClass } from "@/components/ui";
+import { Badge, Button, Card, Field, inputClass } from "@/components/ui";
 import { arDate } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 
@@ -15,25 +15,38 @@ export default async function WeeksPage({ searchParams }: { searchParams: Promis
   const host = headerStore.get("x-forwarded-host") ?? headerStore.get("host") ?? "localhost:3000";
   const protocol = headerStore.get("x-forwarded-proto") ?? (host.includes("localhost") ? "http" : "https");
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? `${protocol}://${host}`;
+  const activeLinks = weeks.flatMap((week) => week.links).filter((link) => link.status === "ACTIVE").length;
 
   return (
     <div className="space-y-6">
-      <div className="rounded-xl border border-security/10 bg-white/85 p-5 shadow-[0_14px_36px_rgba(18,48,71,.06)]">
-        <p className="text-sm font-bold text-security">إدارة الروابط الأسبوعية</p>
-        <h1 className="mt-1 text-2xl font-black text-official">إصدار روابط فحص</h1>
-        <p className="mt-2 max-w-3xl text-sm leading-7 text-muted">أنشئ أسبوع الفحص، اختر الفاحصين، ثم صدّر روابطهم كمسودات بريد رسمية بصيغة EML جاهزة للمراجعة والإرسال.</p>
+      <div className="rounded-xl border border-security/15 bg-gradient-to-l from-security/8 to-white p-5 shadow-[0_14px_36px_rgba(18,48,71,.06)]">
+        <p className="text-sm font-bold text-security">الأمر الرئيسي للمدير</p>
+        <h1 className="mt-1 text-2xl font-black text-official">توليد روابط نموذج الفاحص</h1>
+        <p className="mt-2 max-w-4xl text-sm leading-7 text-muted">هذه الصفحة هي نقطة البداية للفحص: أنشئ أسبوع الفحص، اختر الفاحصين، يصدر النظام رابط نموذج خاص لكل فاحص مع رمز تحقق، ثم نزّل مسودة بريد EML جاهزة للإرسال.</p>
+        <div className="mt-4 grid gap-3 md:grid-cols-3">
+          <ProcessStep number="1" title="اختر الفاحصين" text="حدد من سيستلم نموذج الفحص." />
+          <ProcessStep number="2" title="أصدر الروابط" text="ينشئ النظام رابطًا ورمز تحقق لكل فاحص." />
+          <ProcessStep number="3" title="أرسل EML" text="حمّل مسودة البريد وراجعها ثم أرسلها." />
+        </div>
       </div>
 
-      <Card>
+      <Card className="border-security/15">
+        <div className="mb-4 flex flex-col justify-between gap-2 md:flex-row md:items-center">
+          <div>
+            <h2 className="text-lg font-black text-official">إصدار روابط نموذج جديدة</h2>
+            <p className="mt-1 text-sm text-muted">كل فاحص محدد سيحصل على رابط نموذج فحص مستقل وعدد مهام حسب الإعداد أدناه.</p>
+          </div>
+          <Badge tone="security">{activeLinks} رابط نشط</Badge>
+        </div>
         <form action={saveWeek} className="grid gap-4 md:grid-cols-4">
-          <Field label="اسم الأسبوع"><input name="name" className={inputClass} required /></Field>
+          <Field label="اسم أسبوع الفحص"><input name="name" className={inputClass} required /></Field>
           <Field label="تاريخ البداية"><input name="startsAt" type="date" className={inputClass} required /></Field>
           <Field label="تاريخ النهاية"><input name="endsAt" type="date" className={inputClass} required /></Field>
-          <Field label="عدد المهام لكل فاحص"><input name="targetTasks" type="number" min={1} defaultValue={10} className={inputClass} required /></Field>
+          <Field label="عدد نماذج/مهام كل فاحص"><input name="targetTasks" type="number" min={1} defaultValue={10} className={inputClass} required /></Field>
           <div className="md:col-span-4 rounded-xl border border-security/10 bg-soft p-4">
             <div className="mb-3 flex flex-col justify-between gap-2 md:flex-row md:items-center">
-              <div className="font-bold text-official">الفاحصون</div>
-              <div className="text-xs font-semibold text-muted">اختر فاحصًا واحدًا على الأقل حتى تظهر الروابط بعد الإصدار.</div>
+              <div className="font-bold text-official">الفاحصون المستلمون للرابط</div>
+              <div className="text-xs font-semibold text-muted">اختر فاحصًا واحدًا على الأقل حتى يتم توليد روابط النماذج.</div>
             </div>
             {params.error === "no-inspectors" ? <div className="mb-3 rounded-lg border border-danger/20 bg-danger/10 p-3 text-sm font-bold text-danger">لم يتم إصدار روابط لأنك لم تختر أي فاحص.</div> : null}
             <div className="grid gap-3 md:grid-cols-3">
@@ -45,7 +58,7 @@ export default async function WeeksPage({ searchParams }: { searchParams: Promis
               ))}
             </div>
           </div>
-          <Button className="md:col-span-4">إصدار روابط فحص</Button>
+          <Button className="md:col-span-4">توليد روابط نموذج الفاحص</Button>
         </form>
       </Card>
 
@@ -57,27 +70,27 @@ export default async function WeeksPage({ searchParams }: { searchParams: Promis
               <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <h2 className="text-lg font-black text-official">{week.name}</h2>
-                  <p className="text-sm text-muted">{arDate(week.startsAt)} إلى {arDate(week.endsAt)} · {week.links.length} فاحص · {tasks.length} مهمة</p>
+                  <p className="text-sm text-muted">{arDate(week.startsAt)} إلى {arDate(week.endsAt)} · {week.links.length} رابط نموذج · {tasks.length} مهمة</p>
                 </div>
                 <Badge tone="security">{week.status}</Badge>
               </div>
               {week.links.length ? (
                 <div className="overflow-x-auto rounded-xl border border-slate-200">
-                  <table className="w-full min-w-[980px] text-sm">
-                    <thead className="bg-soft"><tr className="border-b text-muted"><th className="p-3 text-right">الفاحص</th><th className="p-3 text-right">رابط الفحص</th><th className="p-3 text-right">رمز التحقق</th><th className="p-3 text-right">المهام</th><th className="p-3 text-right">الحالة</th><th className="p-3 text-right">إرسال الرابط</th><th className="p-3 text-right">إجراءات</th></tr></thead>
+                  <table className="w-full min-w-[1080px] text-sm">
+                    <thead className="bg-soft"><tr className="border-b text-muted"><th className="p-3 text-right">الفاحص</th><th className="p-3 text-right">رابط نموذج الفحص</th><th className="p-3 text-right">رمز التحقق</th><th className="p-3 text-right">المهام</th><th className="p-3 text-right">الحالة</th><th className="p-3 text-right">الإرسال</th><th className="p-3 text-right">إجراءات</th></tr></thead>
                     <tbody>
                       {week.links.map((link) => {
                         const url = `${baseUrl}/w/${link.token}`;
                         return (
                           <tr key={link.id} className="border-b bg-white last:border-0">
                             <td className="p-3 font-bold text-official">{link.inspector.name}<br /><span className="text-xs text-muted">{link.inspector.employeeNumber}</span></td>
-                            <td className="p-3"><code className="rounded-md px-2 py-1 text-xs" dir="ltr">{url}</code></td>
+                            <td className="p-3"><code className="rounded-md px-2 py-1 text-xs" dir="ltr">{url}</code><div className="mt-2"><a href={url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs font-bold text-security"><ExternalLink className="h-3.5 w-3.5" /> فتح النموذج</a></div></td>
                             <td className="p-3 font-black text-security">{link.verificationCode}</td>
                             <td className="p-3 text-muted">{link.tasks.length} · {link.tasks.filter((task) => task.status === "COMPLETED").length} مكتملة</td>
                             <td className="p-3"><Badge tone={link.status === "ACTIVE" ? "success" : "danger"}>{link.status === "ACTIVE" ? "نشط" : "غير نشط"}</Badge></td>
                             <td className="p-3">
-                              <a className="ui-button inline-flex min-h-10 items-center gap-2 rounded-lg border border-security/20 bg-security/10 px-3 text-sm font-bold text-security transition hover:bg-security/15" href={buildEmlHref({ to: link.inspector.email ?? "", inspectorName: link.inspector.name, weekName: week.name, url, code: link.verificationCode })} download={`fahs-${link.inspector.employeeNumber}-${week.id}.eml`}>
-                                <Mail className="h-4 w-4" /> مسودة EML
+                              <a className="ui-button inline-flex min-h-10 items-center gap-2 rounded-lg border border-security/20 bg-security px-3 text-sm font-bold text-white transition hover:bg-[#0b4f4c]" href={buildEmlHref({ to: link.inspector.email ?? "", inspectorName: link.inspector.name, weekName: week.name, url, code: link.verificationCode })} download={`fahs-inspection-form-${link.inspector.employeeNumber}-${week.id}.eml`}>
+                                <Mail className="h-4 w-4" /> مسودة بريد EML
                               </a>
                             </td>
                             <td className="p-3">
@@ -93,7 +106,7 @@ export default async function WeeksPage({ searchParams }: { searchParams: Promis
                   </table>
                 </div>
               ) : (
-                <div className="rounded-lg border border-warning/25 bg-warning/10 p-4 text-sm font-bold text-warning">لم تصدر روابط لهذا الأسبوع لأنه لا يحتوي على فاحصين. استخدم نموذج إصدار روابط فحص واختر الفاحصين قبل الإرسال.</div>
+                <div className="rounded-lg border border-warning/25 bg-warning/10 p-4 text-sm font-bold text-warning">لم تصدر روابط نموذج لهذا الأسبوع لأنه لا يحتوي على فاحصين. اختر الفاحصين من نموذج الإصدار ثم أرسل مسودات البريد.</div>
               )}
             </Card>
           );
@@ -103,17 +116,22 @@ export default async function WeeksPage({ searchParams }: { searchParams: Promis
   );
 }
 
+function ProcessStep({ number, title, text }: { number: string; title: string; text: string }) {
+  return <div className="rounded-lg border border-security/10 bg-white p-3"><div className="mb-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-security text-sm font-black text-white">{number}</div><div className="font-black text-official">{title}</div><p className="mt-1 text-xs leading-6 text-muted">{text}</p></div>;
+}
+
 function buildEmlHref({ to, inspectorName, weekName, url, code }: { to: string; inspectorName: string; weekName: string; url: string; code: string }) {
-  const subject = `رابط فحص أسبوعي - ${weekName}`;
+  const subject = `رابط نموذج الفحص - ${weekName}`;
   const body = [
     `سعادة الفاحص/ ${inspectorName}`,
     "",
-    "نأمل الدخول إلى رابط الفحص الأسبوعي واستكمال المهام المسندة لكم عبر نظام الفاحص الذكي.",
+    "نأمل الدخول إلى رابط نموذج الفحص واستكمال فحص المنشأة والمهام المسندة لكم عبر نظام الفاحص الذكي.",
     "",
-    `الأسبوع: ${weekName}`,
-    `رابط الفحص: ${url}`,
+    `أسبوع الفحص: ${weekName}`,
+    `رابط نموذج الفحص: ${url}`,
     `رمز التحقق: ${code}`,
     "",
+    "بعد إكمال النموذج سيتم حفظ النتائج وتوليد التقرير المرتبط بالفحص داخل النظام.",
     "يرجى عدم مشاركة الرابط أو رمز التحقق مع أي طرف غير مخول.",
     "",
     "مع التحية،",
