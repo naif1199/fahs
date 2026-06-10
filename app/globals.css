@@ -51,7 +51,7 @@ button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
   color: #123047 !important;
 }
 
-.text-white, .text-charcoal { color: #2F3437 !important; }
+.text-charcoal { color: #2F3437 !important; }
 .text-official { color: #123047 !important; }
 .text-muted { color: #6B7280 !important; }
 .bg-soft { background-color: #F6F7F5 !important; }
