@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { BarChart3, CalendarDays, ClipboardCheck, FileText, ListChecks, ScrollText, Settings, ShieldCheck, Users } from "lucide-react";
+import { BarChart3, CalendarDays, FileText, ListChecks, ScrollText, Settings, ShieldCheck, Users } from "lucide-react";
 import { logoutAdmin } from "@/app/actions";
 import { Logo } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -9,13 +9,13 @@ import { isAdmin } from "@/lib/auth";
 const nav = [
   ["لوحة التحكم", "/admin", BarChart3],
   ["الفاحصون", "/admin/inspectors", Users],
-  ["أسابيع الفحص", "/admin/weeks", CalendarDays],
+  ["روابط نموذج الفاحص", "/admin/weeks", CalendarDays],
   ["التقارير", "/admin/reports", FileText],
   ["سجل التدقيق", "/admin/audit", ScrollText],
   ["المعايير", "/admin/criteria", ListChecks],
   ["تصنيف المنشآت", "/admin/facility-types", ShieldCheck],
   ["الإعدادات", "/admin/settings", Settings]
-];
+] as const;
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   if (!(await isAdmin())) redirect("/");
@@ -25,10 +25,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <Logo sidebar />
         <div className="mt-4"><ThemeToggle /></div>
         <nav className="mt-6 grid gap-1.5" aria-label="التنقل الإداري">
-          {nav.map(([label, href, Icon]) => {
-            const NavIcon = Icon as typeof BarChart3;
-            return <Link key={href as string} href={href as string} className="group flex min-h-11 items-center gap-3 rounded-lg border border-transparent px-3 text-sm font-bold text-muted transition hover:border-security/15 hover:bg-security/7 hover:text-official focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-security/25"><NavIcon size={18} className="text-security transition group-hover:text-security" />{label as string}</Link>;
-          })}
+          {nav.map(([label, href, Icon]) => (
+            <Link key={href} href={href} className="group flex min-h-11 items-center gap-3 rounded-lg border border-transparent px-3 text-sm font-bold text-muted transition hover:border-security/15 hover:bg-security/7 hover:text-official focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-security/25">
+              <Icon size={18} className="text-security transition group-hover:text-security" />
+              {label}
+            </Link>
+          ))}
         </nav>
         <form action={logoutAdmin} className="absolute bottom-4 left-4 right-4"><button className="ui-button w-full rounded-lg border border-danger/20 bg-danger/10 px-4 py-3 text-sm font-bold text-danger transition hover:bg-danger/15 active:scale-[.98]">تسجيل الخروج</button></form>
       </aside>
