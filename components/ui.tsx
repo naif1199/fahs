@@ -2,7 +2,7 @@ import Link from "next/link";
 import { clsx } from "clsx";
 
 export function Card({ className, children }: { className?: string; children: React.ReactNode }) {
-  return <section className={clsx("rounded-[28px] border border-white/12 bg-white/[0.065] p-6 shadow-[0_24px_80px_rgba(0,0,0,.24)] backdrop-blur-xl", className)}>{children}</section>;
+  return <section className={clsx("app-card rounded-[28px] border border-white/12 bg-white/[0.065] p-6 shadow-[0_24px_80px_rgba(0,0,0,.24)] backdrop-blur-xl", className)}>{children}</section>;
 }
 
 export function StatCard({ label, value, tone = "security" }: { label: string; value: string | number; tone?: "security" | "official" | "success" | "danger" | "warning" }) {
@@ -31,7 +31,7 @@ export function Field({ label, children }: { label: string; children: React.Reac
   return <label className="block"><span className="mb-2 block text-sm font-bold text-charcoal">{label}</span>{children}</label>;
 }
 
-export const inputClass = "w-full rounded-2xl border border-white/12 bg-white/[0.075] px-4 py-3 text-sm text-white shadow-sm outline-none backdrop-blur-xl transition placeholder:text-white/35 focus:border-security focus:ring-security";
+export const inputClass = "app-input w-full rounded-2xl border border-white/12 bg-white/[0.075] px-4 py-3 text-sm text-white shadow-sm outline-none backdrop-blur-xl transition placeholder:text-white/35 focus:border-security focus:ring-security";
 
 export function Badge({ children, tone = "muted" }: { children: React.ReactNode; tone?: "success" | "danger" | "warning" | "security" | "muted" }) {
   const tones = { success: "bg-success/20 text-green-100", danger: "bg-danger/20 text-red-100", warning: "bg-warning/20 text-amber-100", security: "bg-security/25 text-white", muted: "bg-white/10 text-muted" };

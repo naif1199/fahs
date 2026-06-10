@@ -81,6 +81,51 @@ thead tr { color: #A8B4B8; }
   .print-card { background: rgba(255, 255, 255, .065); }
 }
 
+.light-theme body {
+  background:
+    radial-gradient(circle at 15% 8%, rgba(216, 198, 163, .22), transparent 28rem),
+    radial-gradient(circle at 88% 0%, rgba(15, 95, 92, .12), transparent 26rem),
+    linear-gradient(135deg, #F7FAF9 0%, #EEF4F3 52%, #E7EEEE 100%);
+  color: #263238;
+}
+
+.light-theme .admin-shell {
+  background:
+    radial-gradient(circle at 15% 8%, rgba(216, 198, 163, .22), transparent 28rem),
+    radial-gradient(circle at 88% 0%, rgba(15, 95, 92, .12), transparent 26rem),
+    linear-gradient(135deg, #F7FAF9 0%, #EEF4F3 52%, #E7EEEE 100%) !important;
+}
+
+.light-theme .admin-sidebar,
+.light-theme .admin-header {
+  background: rgba(255, 255, 255, .82) !important;
+  border-color: rgba(15, 95, 92, .14) !important;
+  color: #263238;
+}
+
+.light-theme .app-card,
+.light-theme .print-card {
+  background: rgba(255, 255, 255, .82) !important;
+  border-color: rgba(15, 95, 92, .14) !important;
+  color: #263238;
+  box-shadow: 0 22px 70px rgba(18, 48, 71, .1) !important;
+}
+
+.light-theme .app-input {
+  background: rgba(255, 255, 255, .92) !important;
+  border-color: rgba(15, 95, 92, .16) !important;
+  color: #263238 !important;
+}
+
+.light-theme .text-white,
+.light-theme .text-charcoal,
+.light-theme .text-official {
+  color: #263238 !important;
+}
+
+.light-theme .text-muted { color: #64748B !important; }
+.light-theme code { background: rgba(15, 95, 92, .08) !important; color: #123047 !important; }
+
 @media print {
   body { background: white; }
   .no-print { display: none !important; }

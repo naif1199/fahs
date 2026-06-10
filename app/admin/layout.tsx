@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { BarChart3, CalendarDays, ClipboardCheck, FileText, ListChecks, ScrollText, Settings, ShieldCheck, Users } from "lucide-react";
 import { logoutAdmin } from "@/app/actions";
 import { Logo } from "@/components/logo";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { isAdmin } from "@/lib/auth";
 
 const nav = [
@@ -19,9 +20,10 @@ const nav = [
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   if (!(await isAdmin())) redirect("/");
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_15%_8%,rgba(216,198,163,.12),transparent_28rem),radial-gradient(circle_at_90%_0%,rgba(15,95,92,.22),transparent_26rem),linear-gradient(135deg,#071111_0%,#0B1B1D_52%,#123047_100%)]">
-      <aside className="fixed right-0 top-0 z-20 hidden h-screen w-80 border-l border-white/10 bg-[#071111]/75 p-5 shadow-[0_0_80px_rgba(0,0,0,.35)] backdrop-blur-2xl lg:block">
+    <div className="admin-shell min-h-screen bg-[radial-gradient(circle_at_15%_8%,rgba(216,198,163,.12),transparent_28rem),radial-gradient(circle_at_90%_0%,rgba(15,95,92,.22),transparent_26rem),linear-gradient(135deg,#071111_0%,#0B1B1D_52%,#123047_100%)]">
+      <aside className="admin-sidebar fixed right-0 top-0 z-20 hidden h-screen w-80 border-l border-white/10 bg-[#071111]/75 p-5 shadow-[0_0_80px_rgba(0,0,0,.35)] backdrop-blur-2xl lg:block">
         <Logo sidebar />
+        <div className="mt-5"><ThemeToggle /></div>
         <nav className="mt-8 grid gap-2">
           {nav.map(([label, href, Icon]) => {
             const NavIcon = Icon as typeof BarChart3;
@@ -30,7 +32,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         </nav>
         <form action={logoutAdmin} className="absolute bottom-5 left-5 right-5"><button className="w-full rounded-2xl border border-danger/25 bg-danger/10 px-4 py-3 text-sm font-bold text-red-100 transition hover:bg-danger/20">تسجيل الخروج</button></form>
       </aside>
-      <header className="sticky top-0 z-10 border-b border-white/10 bg-[#071111]/80 p-4 backdrop-blur-xl lg:hidden"><Logo /></header>
+      <header className="admin-header sticky top-0 z-10 border-b border-white/10 bg-[#071111]/80 p-4 backdrop-blur-xl lg:hidden"><Logo /><div className="mt-3"><ThemeToggle /></div></header>
       <main className="p-4 lg:mr-80 lg:p-8">{children}</main>
     </div>
   );
