@@ -7,7 +7,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { isAdmin } from "@/lib/auth";
 
 const nav = [
-  ["لوحة التحكم", "/admin", BarChart3],
+  ["لوحة المعلومات", "/admin", BarChart3],
   ["الفاحصون", "/admin/inspectors", Users],
   ["روابط نموذج الفاحص", "/admin/weeks", CalendarDays],
   ["مؤشرات أداء الفاحصين", "/admin/performance", Gauge],
