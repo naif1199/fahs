@@ -1,4 +1,4 @@
-import { Activity, AlertTriangle, CheckCircle2, ClipboardList, FileText, Link2, Mail, Percent, Timer, Users } from "lucide-react";
+import { Activity, AlertTriangle, CheckCircle2, ClipboardList, FileText, Link2, Percent, Timer, Users } from "lucide-react";
 import { Button, Card, StatCard } from "@/components/ui";
 import { BarsChart, DonutChart } from "@/components/charts";
 import { prisma } from "@/lib/prisma";
@@ -22,6 +22,14 @@ export default async function AdminDashboard() {
   const inProgress = await prisma.inspectionTask.count({ where: { status: "IN_PROGRESS" } });
   const late = await prisma.inspectionTask.count({ where: { status: "LATE" } });
   const avg = reports.length ? reports.reduce((sum, r) => sum + r.complianceRate, 0) / reports.length : 0;
+  const inspectorPerformance = byInspector
+    .map((link) => {
+      const total = link.tasks.length;
+      const done = link.tasks.filter((task) => task.status === "COMPLETED").length;
+      return { id: link.id, name: link.inspector.name, employeeNumber: link.inspector.employeeNumber, total, done, rate: total ? Math.round((done / total) * 100) : 0 };
+    })
+    .sort((a, b) => b.done - a.done)
+    .slice(0, 5);
 
   return (
     <div className="space-y-6">
@@ -29,7 +37,7 @@ export default async function AdminDashboard() {
         <div>
           <p className="text-sm font-bold text-security">الفاحص الذكي</p>
           <h1 className="mt-1 text-2xl font-black text-official">لوحة تحكم المدير</h1>
-          <p className="mt-2 max-w-3xl text-sm leading-7 text-muted">ابدأ من توليد روابط نموذج الفاحص، ثم تابع المهام والتقارير الناتجة عن تعبئة النموذج.</p>
+          <p className="mt-2 max-w-3xl text-sm leading-7 text-muted">توليد روابط نموذج الفاحص، متابعة التنفيذ، ومراجعة التقارير الناتجة.</p>
         </div>
         <div className="grid min-w-64 grid-cols-2 gap-2 text-sm">
           <Mini label="روابط نشطة" value={activeLinks} icon={Link2} />
@@ -37,22 +45,17 @@ export default async function AdminDashboard() {
         </div>
       </div>
 
-      <Card className="border-security/20 bg-gradient-to-l from-security/8 to-white p-6">
-        <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
-          <div className="max-w-3xl">
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-security/15 bg-white px-3 py-1 text-xs font-black text-security"><Link2 className="h-4 w-4" /> الإجراء الأساسي</div>
-            <h2 className="text-xl font-black text-official">توليد روابط نموذج الفاحص وإرسالها</h2>
-            <p className="mt-2 text-sm leading-7 text-muted">هذا هو مدخل عملية الفحص: اختر أسبوع الفحص والفاحصين، يصدر النظام رابطًا خاصًا لكل فاحص مع رمز تحقق، ثم حمّل مسودة بريد EML جاهزة للإرسال.</p>
+      <Card className="border-security/20 p-5">
+        <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+          <div>
+            <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-security/15 bg-security/7 px-3 py-1 text-xs font-black text-security"><Link2 className="h-4 w-4" /> الإجراء الأساسي</div>
+            <h2 className="text-xl font-black text-official">توليد روابط نموذج الفاحص</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-7 text-muted">أنشئ دفعة فحص، اختر الفاحصين، ثم حمّل مسودات البريد EML لإرسال روابط النماذج ورموز التحقق.</p>
           </div>
-          <div className="grid gap-2 sm:grid-cols-3 xl:min-w-[460px]">
-            <Step icon={Link2} label="إصدار الروابط" />
-            <Step icon={Mail} label="تنزيل EML" />
-            <Step icon={CheckCircle2} label="استلام التقرير" />
+          <div className="flex flex-wrap gap-3">
+            <Button href="/admin/weeks" className="px-5">توليد الروابط</Button>
+            <Button href="/admin/weeks" className="bg-official hover:bg-[#0d2538]">مسودات EML</Button>
           </div>
-        </div>
-        <div className="mt-5 flex flex-wrap gap-3">
-          <Button href="/admin/weeks" className="px-5">توليد روابط نموذج الفاحص</Button>
-          <Button href="/admin/inspectors" className="bg-official hover:bg-[#0d2538]">إدارة الفاحصين</Button>
         </div>
       </Card>
 
@@ -70,9 +73,19 @@ export default async function AdminDashboard() {
         <StatCard label="غير مطابق عالي الأهمية" value={highResponses} tone="danger" />
       </div>
 
+      <Card>
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3"><span className="grid h-9 w-9 place-items-center rounded-lg bg-security/10 text-security"><Users className="h-5 w-5" /></span><h2 className="text-base font-black text-official">مؤشرات أداء الفاحصين</h2></div>
+          <Button href="/admin/weeks" className="min-h-9 px-3">إدارة الروابط</Button>
+        </div>
+        <div className="grid gap-3 md:grid-cols-5">
+          {inspectorPerformance.length ? inspectorPerformance.map((item) => <PerformanceCard key={item.id} {...item} />) : <div className="rounded-lg border border-slate-200 bg-soft p-4 text-sm font-bold text-muted md:col-span-5">لا توجد مهام فاحصين لعرض المؤشرات بعد.</div>}
+        </div>
+      </Card>
+
       <div className="grid gap-6 xl:grid-cols-2">
         <ChartCard title="توزيع حالات المهام" icon={ClipboardList}><DonutChart data={byStatus.map((s) => ({ name: taskStatusLabel(s.status), value: s._count }))} /></ChartCard>
-        <ChartCard title="أداء الفاحصين" icon={Users}><BarsChart data={byInspector.map((l) => ({ name: l.inspector.name, value: l.tasks.filter((t) => t.status === "COMPLETED").length }))} /></ChartCard>
+        <ChartCard title="أداء الفاحصين التفصيلي" icon={Users}><BarsChart data={byInspector.map((l) => ({ name: l.inspector.name, value: l.tasks.filter((t) => t.status === "COMPLETED").length }))} /></ChartCard>
         <ChartCard title="التقارير حسب المدينة" icon={Activity}><BarsChart data={byCity.map((c) => ({ name: c.city, value: c._count }))} /></ChartCard>
         <ChartCard title="التقارير حسب نوع المنشأة" icon={CheckCircle2}><BarsChart data={byType.map((t) => ({ name: t.name, value: t._count.facilities }))} /></ChartCard>
       </div>
@@ -84,8 +97,8 @@ function Mini({ label, value, icon: Icon }: { label: string; value: string | num
   return <div className="rounded-lg border border-security/10 bg-soft p-3"><Icon className="mb-2 h-4 w-4 text-security" /><div className="text-xs text-muted">{label}</div><div className="text-base font-black text-official">{value}</div></div>;
 }
 
-function Step({ label, icon: Icon }: { label: string; icon: typeof Link2 }) {
-  return <div className="rounded-lg border border-security/10 bg-white p-3 text-center"><Icon className="mx-auto mb-2 h-5 w-5 text-security" /><div className="text-sm font-black text-official">{label}</div></div>;
+function PerformanceCard({ name, employeeNumber, total, done, rate }: { name: string; employeeNumber: string; total: number; done: number; rate: number }) {
+  return <div className="rounded-lg border border-slate-200 bg-white p-3"><div className="truncate text-sm font-black text-official">{name}</div><div className="text-xs text-muted">{employeeNumber}</div><div className="mt-3 flex items-center justify-between text-xs text-muted"><span>{done}/{total}</span><strong className="text-security">{rate}%</strong></div><div className="mt-2 h-2 overflow-hidden rounded-full bg-soft"><span className="block h-full rounded-full bg-security" style={{ width: `${rate}%` }} /></div></div>;
 }
 
 function ChartCard({ title, icon: Icon, children }: { title: string; icon: typeof AlertTriangle; children: React.ReactNode }) {
