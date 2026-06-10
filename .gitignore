@@ -1,0 +1,9 @@
+node_modules
+.next
+.env
+*.db
+dev.db*
+uploads
+dist
+*.tsbuildinfo
+.vercel

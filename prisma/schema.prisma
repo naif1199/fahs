@@ -1,0 +1,264 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum InspectorStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum WeekStatus {
+  ACTIVE
+  CLOSED
+  DRAFT
+}
+
+enum LinkStatus {
+  ACTIVE
+  DISABLED
+  EXPIRED
+}
+
+enum TaskStatus {
+  UNUSED
+  IN_PROGRESS
+  COMPLETED
+  LATE
+  CANCELLED
+}
+
+enum Importance {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum RequirementStatus {
+  MANDATORY
+  CONDITIONAL
+}
+
+enum EvaluationStatus {
+  COMPLIANT
+  NON_COMPLIANT
+}
+
+enum ReportStatus {
+  DRAFT
+  IN_PROGRESS
+  APPROVED
+  LOCKED
+}
+
+enum ObservationStatus {
+  OPEN
+  IN_PROGRESS
+  CLOSED
+}
+
+enum AuditStatus {
+  SUCCESS
+  FAILED
+}
+
+model Inspector {
+  id             String          @id @default(cuid())
+  name           String
+  employeeNumber String          @unique
+  department     String
+  mobile         String?
+  email          String?
+  status         InspectorStatus @default(ACTIVE)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  links          WeeklyLink[]
+}
+
+model InspectionWeek {
+  id        String       @id @default(cuid())
+  name      String
+  startsAt  DateTime
+  endsAt    DateTime
+  status    WeekStatus   @default(ACTIVE)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  links     WeeklyLink[]
+}
+
+model WeeklyLink {
+  id                  String          @id @default(cuid())
+  token               String          @unique
+  verificationCode    String
+  targetTasks         Int
+  acknowledgedAt      DateTime?
+  status              LinkStatus      @default(ACTIVE)
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  inspectorId         String
+  weekId              String
+  inspector           Inspector       @relation(fields: [inspectorId], references: [id])
+  week                InspectionWeek  @relation(fields: [weekId], references: [id])
+  tasks               InspectionTask[]
+}
+
+model InspectionTask {
+  id          String        @id @default(cuid())
+  number      Int
+  status      TaskStatus    @default(UNUSED)
+  startedAt   DateTime?
+  completedAt DateTime?
+  dueAt       DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  linkId      String
+  link        WeeklyLink    @relation(fields: [linkId], references: [id])
+  report      Report?
+}
+
+model Facility {
+  id                  String   @id @default(cuid())
+  name                String
+  location            String
+  city                String
+  district            String
+  classification      String
+  securitySensitivity String
+  representativeName  String
+  contactNumber       String
+  visitDate           DateTime
+  startedAt           String
+  endedAt             String
+  generalNotes        String?
+  facilityTypeId      String
+  facilityType        FacilityType @relation(fields: [facilityTypeId], references: [id])
+  reports             Report[]
+}
+
+model FacilityType {
+  id                 String          @id @default(cuid())
+  name               String          @unique
+  description        String?
+  defaultSensitivity String          @default("متوسطة")
+  extraRequirements  String?
+  isActive           Boolean         @default(true)
+  createdAt          DateTime        @default(now())
+  facilities         Facility[]
+  checklistItems     ChecklistItem[]
+}
+
+model SecurityClassification {
+  id          String @id @default(cuid())
+  name        String @unique
+  description String?
+}
+
+model ChecklistItem {
+  id                  String              @id @default(cuid())
+  itemNumber          String
+  mainSection         String
+  subCategory         String
+  requirementText     String
+  sensitivityLevel    String
+  importance          Importance
+  requirementStatus   RequirementStatus
+  regulatoryReference String?
+  articleNumber       String?
+  isActive            Boolean             @default(true)
+  createdAt           DateTime            @default(now())
+  facilityTypeId      String?
+  facilityType        FacilityType?        @relation(fields: [facilityTypeId], references: [id])
+  responses           InspectionResponse[]
+}
+
+model InspectionResponse {
+  id                  String           @id @default(cuid())
+  evaluationStatus    EvaluationStatus
+  inspectorNote       String?
+  correctiveAction    String?
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+  reportId            String
+  checklistItemId     String
+  report              Report           @relation(fields: [reportId], references: [id])
+  checklistItem       ChecklistItem     @relation(fields: [checklistItemId], references: [id])
+  observation         Observation?
+  attachments         Attachment[]
+
+  @@unique([reportId, checklistItemId])
+}
+
+model Observation {
+  id               String            @id @default(cuid())
+  note             String
+  correctiveAction String?
+  status           ObservationStatus @default(OPEN)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  reportId         String
+  responseId       String            @unique
+  report           Report            @relation(fields: [reportId], references: [id])
+  response         InspectionResponse @relation(fields: [responseId], references: [id])
+  attachments      Attachment[]
+}
+
+model Attachment {
+  id             String              @id @default(cuid())
+  fileName       String
+  fileType       String
+  fileUrl        String
+  createdAt      DateTime            @default(now())
+  reportId       String
+  responseId     String?
+  observationId  String?
+  report         Report              @relation(fields: [reportId], references: [id])
+  response       InspectionResponse? @relation(fields: [responseId], references: [id])
+  observation    Observation?        @relation(fields: [observationId], references: [id])
+}
+
+model Report {
+  id                String              @id @default(cuid())
+  reportNumber      String              @unique
+  complianceRate    Float               @default(0)
+  compliantCount    Int                 @default(0)
+  nonCompliantCount Int                 @default(0)
+  notesCount        Int                 @default(0)
+  status            ReportStatus        @default(DRAFT)
+  approvedAt        DateTime?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  taskId            String              @unique
+  facilityId        String?
+  task              InspectionTask      @relation(fields: [taskId], references: [id])
+  facility          Facility?           @relation(fields: [facilityId], references: [id])
+  responses         InspectionResponse[]
+  observations      Observation[]
+  attachments       Attachment[]
+}
+
+model AuditLog {
+  id             String      @id @default(cuid())
+  operationType  String
+  actorName      String?
+  employeeNumber String?
+  linkId         String?
+  taskId         String?
+  weekId         String?
+  facilityName   String?
+  ipAddress      String?
+  userAgent      String?
+  description    String
+  status         AuditStatus @default(SUCCESS)
+  createdAt      DateTime    @default(now())
+}
+
+model SystemSetting {
+  id           String   @id @default(cuid())
+  key          String   @unique
+  value        String
+  updatedAt    DateTime @updatedAt
+}
