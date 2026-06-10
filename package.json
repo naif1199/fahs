@@ -10,6 +10,7 @@
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
     "criteria:import": "tsx scripts/import-criteria.ts",
+    "demo:reports": "tsx scripts/create-demo-reports.ts",
     "setup": "prisma generate && prisma db push && tsx prisma/seed.ts"
   },
   "dependencies": {
