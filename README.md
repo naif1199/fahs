@@ -1,6 +1,6 @@
 # الفاحص الذكي
 
-نظام ويب عربي لإدارة فحص مراكز التحكم والمراقبة الأمنية في المنشآت، مبني باستخدام Next.js وTypeScript وTailwind CSS وPrisma وSQLite.
+نظام ويب عربي لإدارة فحص مراكز التحكم والمراقبة الأمنية في المنشآت، مبني باستخدام Next.js وTypeScript وTailwind CSS وPrisma وPostgreSQL عبر Neon.
 
 ## التشغيل المحلي
 
@@ -10,7 +10,7 @@
 cp .env.example .env
 ```
 
-2. ثبّت الحزم وجهّز قاعدة البيانات:
+2. ضع رابط Neon في `DATABASE_URL` ثم ثبّت الحزم وجهّز قاعدة البيانات:
 
 ```bash
 npm install
@@ -40,4 +40,4 @@ npm run dev
 
 ## ملاحظات النشر
 
-SQLite مناسب للتشغيل المحلي. عند النشر على Vercel يفضّل تحويل `provider` في Prisma إلى PostgreSQL وربط قاعدة بيانات دائمة مثل Vercel Postgres أو Neon.
+يستخدم النظام PostgreSQL، ويوصى باستخدام Neon في الإنتاج مع إضافة `DATABASE_URL` في Vercel Environment Variables.

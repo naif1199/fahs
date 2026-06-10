@@ -7,3 +7,5 @@ uploads
 dist
 *.tsbuildinfo
 .vercel
+.env*.local
+.env*.local
