@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(request: NextRequest) {
   const items = await prisma.checklistItem.findMany({ include: { facilityType: true } });
-  const rows = items.map((i) => ({ id: i.id, "رقم البند": i.itemNumber, "القسم الرئيسي": i.mainSection, "التصنيف الفرعي": i.subCategory, "نص المتطلب": i.requirementText, "نوع المنشأة": i.facilityType?.name ?? "", "مستوى الحساسية": i.sensitivityLevel, "درجة الأهمية": i.importance, "حالة الإلزام": i.requirementStatus, "المرجع النظامي": i.regulatoryReference ?? "", "رقم المادة": i.articleNumber ?? "" }));
+  const rows = items.map((i) => ({ id: i.id, sourceSheet: i.sourceSheet ?? "", originalRowNumber: i.originalRowNumber ?? "", "رقم البند": i.itemNumber, "القسم الرئيسي": i.mainSection, "التصنيف الفرعي": i.subCategory, "نص المتطلب": i.requirementText, "نوع المنشأة": i.facilityType?.name ?? "", "مستوى الحساسية": i.sensitivityLevel, "درجة الأهمية": i.importance, "حالة الإلزام": i.requirementStatus, "المرجع النظامي": i.regulatoryReference ?? "", "رقم المادة": i.articleNumber ?? "", rawData: JSON.stringify(i.rawData ?? {}) }));
   if (request.nextUrl.searchParams.get("format") === "xlsx") {
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows), "المواصفات الفنية والمبادئ");

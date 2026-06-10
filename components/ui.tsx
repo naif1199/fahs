@@ -15,14 +15,16 @@ export function StatCard({ label, value, tone = "security" }: { label: string; v
   );
 }
 
-export function Button({ children, href, className, type = "submit" }: { children: React.ReactNode; href?: string; className?: string; type?: "button" | "submit" }) {
+type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & { children: React.ReactNode; href?: string; className?: string };
+
+export function Button({ children, href, className, type = "submit", ...props }: ButtonProps) {
   const classes = clsx("inline-flex min-h-11 items-center justify-center rounded-2xl bg-security px-5 py-2.5 text-sm font-bold text-white shadow-soft transition hover:bg-official print:hidden", className);
-  return href ? <Link className={classes} href={href}>{children}</Link> : <button type={type} className={classes}>{children}</button>;
+  return href ? <Link className={classes} href={href}>{children}</Link> : <button type={type} className={classes} {...props}>{children}</button>;
 }
 
-export function SecondaryButton({ children, href, className, type = "button" }: { children: React.ReactNode; href?: string; className?: string; type?: "button" | "submit" }) {
+export function SecondaryButton({ children, href, className, type = "button", ...props }: ButtonProps) {
   const classes = clsx("inline-flex min-h-11 items-center justify-center rounded-2xl border border-security/20 bg-white px-5 py-2.5 text-sm font-bold text-security transition hover:bg-security/5 print:hidden", className);
-  return href ? <Link className={classes} href={href}>{children}</Link> : <button type={type} className={classes}>{children}</button>;
+  return href ? <Link className={classes} href={href}>{children}</Link> : <button type={type} className={classes} {...props}>{children}</button>;
 }
 
 export function Field({ label, children }: { label: string; children: React.ReactNode }) {

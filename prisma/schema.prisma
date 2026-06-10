@@ -159,6 +159,8 @@ model SecurityClassification {
 
 model ChecklistItem {
   id                  String              @id @default(cuid())
+  sourceSheet         String?
+  originalRowNumber   Int?
   itemNumber          String
   mainSection         String
   subCategory         String
@@ -168,7 +170,9 @@ model ChecklistItem {
   requirementStatus   RequirementStatus
   regulatoryReference String?
   articleNumber       String?
+  rawData             Json?
   isActive            Boolean             @default(true)
+  importedAt          DateTime?
   createdAt           DateTime            @default(now())
   facilityTypeId      String?
   facilityType        FacilityType?        @relation(fields: [facilityTypeId], references: [id])
