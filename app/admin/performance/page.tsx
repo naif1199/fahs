@@ -18,7 +18,7 @@ export default async function InspectorPerformancePage({ searchParams }: { searc
 
     <Card><form className="grid gap-3 md:grid-cols-4 xl:grid-cols-8">
       <Select name="period" label="الفترة الزمنية" value={filters.period} options={[["", "كل الفترات"], ["week", "آخر 7 أيام"], ["month", "آخر 30 يوم"]]} />
-      <Select name="weekId" label="الأسبوع" value={filters.weekId} options={[["", "كل الأسابيع"], ...context.weeks.map((w) => [w.id, w.name] as [string, string])]} />
+      <Select name="weekId" label="دفعة الفحص" value={filters.weekId} options={[["", "كل الدفعات"], ...context.weeks.filter((w) => w.links.length > 0).map((w) => [w.id, w.name] as [string, string])]} />
       <Field label="الشهر"><input name="month" type="month" defaultValue={filters.month ?? ""} className={inputClass} /></Field>
       <Select name="inspectorId" label="الفاحص" value={filters.inspectorId} options={[["", "كل الفاحصين"], ...context.inspectors.map((i) => [i.id, i.name] as [string, string])]} />
       <Select name="city" label="المدينة" value={filters.city} options={[["", "كل المدن"], ...context.cities.map((city) => [city, city] as [string, string])]} />

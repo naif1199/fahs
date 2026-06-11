@@ -8,7 +8,7 @@ const weights = { productivity: 0.3, documentationQuality: 0.3, operationalCommi
 export async function getPerformanceContext(filters: PerformanceFilters = {}) {
   const [inspectors, weeks, facilityTypes, facilities, links, reports, auditLogs] = await Promise.all([
     prisma.inspector.findMany({ where: { status: "ACTIVE" }, orderBy: { name: "asc" } }),
-    prisma.inspectionWeek.findMany({ orderBy: { startsAt: "desc" } }),
+    prisma.inspectionWeek.findMany({ include: { links: true }, orderBy: { startsAt: "desc" } }),
     prisma.facilityType.findMany({ where: { isActive: true }, orderBy: { name: "asc" } }),
     prisma.facility.findMany({ select: { city: true, securitySensitivity: true } }),
     prisma.weeklyLink.findMany({ include: { inspector: true, week: true, tasks: { include: { report: { include: { facility: { include: { facilityType: true } }, responses: { include: { attachments: true, checklistItem: true } }, observations: { include: { attachments: true, response: { include: { checklistItem: true } } } }, attachments: true } } } } } }),

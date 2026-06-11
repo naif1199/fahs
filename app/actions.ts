@@ -62,7 +62,7 @@ export async function saveWeek(formData: FormData) {
   const inspectorIds = formData.getAll("inspectorIds").map(String);
   const targetTasks = Number(str(formData, "targetTasks") || "10");
   if (!inspectorIds.length) {
-    await audit({ operationType: "إنشاء أسبوع فحص", actorName: "مدير النظام", description: "فشل إصدار روابط فحص لعدم اختيار أي فاحص", status: "FAILED" });
+    await audit({ operationType: "إنشاء دفعة فحص", actorName: "مدير النظام", description: "فشل إصدار روابط فحص لعدم اختيار أي فاحص", status: "FAILED" });
     redirect("/admin/weeks?error=no-inspectors");
   }
   const week = await prisma.inspectionWeek.create({
@@ -72,17 +72,31 @@ export async function saveWeek(formData: FormData) {
   for (const inspectorId of inspectorIds) {
     const link = await prisma.weeklyLink.create({ data: { token: makeToken(), verificationCode: String(Math.floor(1000 + Math.random() * 9000)), targetTasks, inspectorId, weekId: week.id } });
     await prisma.inspectionTask.createMany({ data: Array.from({ length: targetTasks }, (_, index) => ({ number: index + 1, linkId: link.id, dueAt: week.endsAt })) });
-    await audit({ operationType: "إصدار رابط أسبوعي", actorName: "مدير النظام", linkId: link.id, weekId: week.id, description: "تم إصدار رابط فحص للفاحص" });
+    await audit({ operationType: "إصدار رابط نموذج فحص", actorName: "مدير النظام", linkId: link.id, weekId: week.id, description: "تم إصدار رابط نموذج فحص للفاحص" });
   }
-  await audit({ operationType: "إنشاء أسبوع فحص", actorName: "مدير النظام", weekId: week.id, description: `تم إنشاء أسبوع الفحص ${week.name}` });
+  await audit({ operationType: "إنشاء دفعة فحص", actorName: "مدير النظام", weekId: week.id, description: `تم إنشاء دفعة الفحص ${week.name}` });
   revalidatePath("/admin/weeks");
 }
 
+export async function deleteEmptyWeek(formData: FormData) {
+  const id = str(formData, "id");
+  const week = await prisma.inspectionWeek.findUnique({ where: { id }, include: { links: true } });
+  if (!week || week.links.length) {
+    await audit({ operationType: "حذف دفعة فحص", actorName: "مدير النظام", weekId: id, description: "تم رفض حذف دفعة فحص لأنها غير فارغة", status: "FAILED" });
+    revalidatePath("/admin/weeks");
+    return;
+  }
+  await prisma.inspectionWeek.delete({ where: { id } });
+  await audit({ operationType: "حذف دفعة فحص", actorName: "مدير النظام", weekId: id, description: `تم حذف دفعة الفحص غير المكتملة ${week.name}` });
+  revalidatePath("/admin/weeks");
+  revalidatePath("/admin");
+  revalidatePath("/admin/performance");
+}
 export async function toggleLink(formData: FormData) {
   const id = str(formData, "id");
   const current = await prisma.weeklyLink.findUniqueOrThrow({ where: { id } });
   await prisma.weeklyLink.update({ where: { id }, data: { status: current.status === "ACTIVE" ? "DISABLED" : "ACTIVE" } });
-  await audit({ operationType: current.status === "ACTIVE" ? "تعطيل رابط" : "إعادة تفعيل رابط", actorName: "مدير النظام", linkId: id, description: "تم تحديث حالة الرابط الأسبوعي" });
+  await audit({ operationType: current.status === "ACTIVE" ? "تعطيل رابط" : "إعادة تفعيل رابط", actorName: "مدير النظام", linkId: id, description: "تم تحديث حالة رابط نموذج الفاحص" });
   revalidatePath("/admin/weeks");
 }
 

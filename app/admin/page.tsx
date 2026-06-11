@@ -11,7 +11,7 @@ export default async function InformationDashboard({ searchParams }: { searchPar
   const filters = await searchParams;
   const [inspectors, weeks, facilityTypes, facilities, tasks, links, reports, observations, highResponses, auditLogs] = await Promise.all([
     prisma.inspector.findMany({ where: { status: "ACTIVE" }, orderBy: { name: "asc" } }),
-    prisma.inspectionWeek.findMany({ orderBy: { startsAt: "desc" } }),
+    prisma.inspectionWeek.findMany({ include: { links: true }, orderBy: { startsAt: "desc" } }),
     prisma.facilityType.findMany({ where: { isActive: true }, orderBy: { name: "asc" } }),
     prisma.facility.findMany({ select: { city: true } }),
     prisma.inspectionTask.findMany({ include: { link: { include: { inspector: true, week: true } }, report: { include: { facility: { include: { facilityType: true } } } } } }),
@@ -64,7 +64,7 @@ export default async function InformationDashboard({ searchParams }: { searchPar
       </div>
       <form className="mt-5 grid gap-3 md:grid-cols-5 xl:grid-cols-7">
         <Select name="period" label="الفترة الزمنية" value={filters.period} options={[["", "كل الفترات"], ["week", "آخر 7 أيام"], ["month", "آخر 30 يوم"]]} />
-        <Select name="weekId" label="الأسبوع" value={filters.weekId} options={[["", "كل الأسابيع"], ...weeks.map((week) => [week.id, week.name] as [string, string])]} />
+        <Select name="weekId" label="دفعة الفحص" value={filters.weekId} options={[["", "كل الدفعات"], ...weeks.filter((week) => week.links.length > 0).map((week) => [week.id, week.name] as [string, string])]} />
         <Select name="inspectorId" label="الفاحص" value={filters.inspectorId} options={[["", "كل الفاحصين"], ...inspectors.map((inspector) => [inspector.id, inspector.name] as [string, string])]} />
         <Select name="city" label="المدينة" value={filters.city} options={[["", "كل المدن"], ...unique(facilities.map((facility) => facility.city)).map((city) => [city, city] as [string, string])]} />
         <Select name="facilityTypeId" label="نوع المنشأة" value={filters.facilityTypeId} options={[["", "كل الأنواع"], ...facilityTypes.map((type) => [type.id, type.name] as [string, string])]} />
@@ -81,7 +81,7 @@ export default async function InformationDashboard({ searchParams }: { searchPar
 
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6">
       <Kpi icon={Users} label="الفاحصون النشطون" value={inspectors.length} />
-      <Kpi icon={CalendarIcon} label="الأسابيع النشطة" value={weeks.filter((week) => week.status === "ACTIVE").length} />
+      <Kpi icon={CalendarIcon} label="دفعات نشطة" value={weeks.filter((week) => week.status === "ACTIVE" && week.links.length > 0).length} />
       <Kpi icon={Link2} label="روابط نموذج نشطة" value={activeLinks} tone="success" />
       <Kpi icon={ClipboardIcon} label="المهام المخصصة" value={filteredTasks.length} />
       <Kpi icon={CheckCircle2} label="المهام المكتملة" value={completed} tone="success" />
