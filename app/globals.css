@@ -129,6 +129,13 @@ code { background: rgba(15, 95, 92, .08) !important; color: #123047 !important; 
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
 
+body .font-bold,
+body .font-black,
+body b,
+body strong {
+  font-weight: 500 !important;
+}
+
 @media print {
   body { background: white !important; color: #2F3437 !important; }
   .no-print { display: none !important; }
