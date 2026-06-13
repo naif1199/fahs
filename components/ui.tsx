@@ -2,7 +2,7 @@ import Link from "next/link";
 import { clsx } from "clsx";
 
 export function Card({ className, children }: { className?: string; children: React.ReactNode }) {
-  return <section className={clsx("app-card rounded-xl border border-security/15 bg-white p-5 shadow-[0_14px_36px_rgba(40,54,24,.10)]", className)}>{children}</section>;
+  return <section className={clsx("app-card rounded-xl border border-security/15 bg-white p-5 shadow-[0_14px_36px_rgba(18,48,71,.10)]", className)}>{children}</section>;
 }
 
 export function StatCard({ label, value, tone = "security" }: { label: string; value: string | number; tone?: "security" | "official" | "success" | "danger" | "warning" }) {
@@ -24,7 +24,7 @@ export function StatCard({ label, value, tone = "security" }: { label: string; v
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & { children: React.ReactNode; href?: string; className?: string };
 
 export function Button({ children, href, className, type = "submit", ...props }: ButtonProps) {
-  const classes = clsx("ui-button inline-flex min-h-11 items-center justify-center rounded-lg bg-security px-4 py-2.5 text-sm font-bold text-white shadow-[0_8px_18px_rgba(96,108,56,.22)] transition-[background-color,box-shadow,transform] duration-150 ease-out hover:bg-[#606c38] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-security/35 active:scale-[.98] disabled:pointer-events-none disabled:opacity-50 print:hidden", className);
+  const classes = clsx("ui-button inline-flex min-h-11 items-center justify-center rounded-lg bg-security px-4 py-2.5 text-sm font-bold text-white shadow-[0_8px_18px_rgba(15,95,92,.22)] transition-[background-color,box-shadow,transform] duration-150 ease-out hover:bg-[#0F5F5C] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-security/35 active:scale-[.98] disabled:pointer-events-none disabled:opacity-50 print:hidden", className);
   return href ? <Link className={classes} href={href}>{children}</Link> : <button type={type} className={classes} {...props}>{children}</button>;
 }
 

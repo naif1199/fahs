@@ -59,7 +59,7 @@ export default async function CriteriaPage({ searchParams }: { searchParams: Pro
           {tabs.map((tab) => {
             const active = activeTab === tab.key;
             const count = tab.key === "all" ? sheetCounts.reduce((sum, item) => sum + item._count, 0) : countMap.get(tab.key) ?? 0;
-            return <Link key={tab.key} href={`/admin/criteria${qs({ ...params, tab: tab.key })}`} className={`rounded-2xl border px-4 py-2 text-sm font-normal text-black shadow-sm transition ${active ? "border-[#dda15e] bg-[#dda15e]/55 shadow-[0_10px_28px_rgba(221,161,94,.25)]" : "border-[#dda15e]/55 bg-[#fefae0]/70 hover:border-[#606c38]/60 hover:bg-[#dda15e]/35"}`}>{tab.label} <span className="text-xs opacity-80">({count})</span></Link>;
+            return <Link key={tab.key} href={`/admin/criteria${qs({ ...params, tab: tab.key })}`} className={`rounded-2xl border px-4 py-2 text-sm font-normal text-black shadow-sm transition ${active ? "border-[#C8B27A] bg-[#C8B27A]/55 shadow-[0_10px_28px_rgba(200,178,122,.25)]" : "border-[#C8B27A]/55 bg-[#F8FAF8]/70 hover:border-[#0F5F5C]/60 hover:bg-[#C8B27A]/35"}`}>{tab.label} <span className="text-xs opacity-80">({count})</span></Link>;
           })}
         </div>
 
