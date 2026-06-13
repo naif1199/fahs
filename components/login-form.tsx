@@ -20,7 +20,7 @@ export function LoginForm({ cinematic = false }: { cinematic?: boolean }) {
           />
         </label>
         {state?.error ? <div className="rounded-2xl bg-red-500/15 p-3 text-sm font-semibold text-red-100">{state.error}</div> : null}
-        <button className="inline-flex w-full items-center justify-center rounded-full bg-white px-8 py-4 text-lg font-bold text-[#264653] shadow-[0_18px_45px_rgba(0,0,0,.24)] transition-colors hover:bg-[#FFF8EB] md:py-5 md:text-xl" type="submit">
+        <button className="inline-flex w-full items-center justify-center rounded-full bg-white px-8 py-4 text-lg font-bold text-[#001219] shadow-[0_18px_45px_rgba(0,0,0,.24)] transition-colors hover:bg-[#e9d8a6] md:py-5 md:text-xl" type="submit">
           {pending ? "جار التحقق..." : "دخول لوحة التحكم"}
         </button>
       </form>

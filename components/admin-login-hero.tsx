@@ -6,8 +6,8 @@ import { LoginForm } from "@/components/login-form";
 
 export function AdminLoginHero({ className = "" }: { className?: string }) {
   return (
-    <main className={`grid min-h-screen place-items-center bg-[radial-gradient(circle_at_16%_12%,rgba(233,196,106,.24),transparent_24rem),radial-gradient(circle_at_84%_0%,rgba(42,157,143,.16),transparent_28rem),linear-gradient(135deg,#FFFDF7,#FFF8EB)] p-5 text-official ${className}`} dir="rtl">
-      <section className="grid w-full max-w-5xl overflow-hidden rounded-2xl border border-security/15 bg-white shadow-[0_24px_70px_rgba(38,70,83,.11)] lg:grid-cols-[1fr_420px]">
+    <main className={`grid min-h-screen place-items-center bg-[radial-gradient(circle_at_16%_12%,rgba(238,155,0,.18),transparent_24rem),radial-gradient(circle_at_84%_0%,rgba(10,147,150,.20),transparent_28rem),linear-gradient(135deg,rgba(233,216,166,.82),rgba(148,210,189,.32))] p-5 text-official ${className}`} dir="rtl">
+      <section className="grid w-full max-w-5xl overflow-hidden rounded-2xl border border-security/15 bg-white shadow-[0_24px_70px_rgba(0,18,25,.14)] lg:grid-cols-[1fr_420px]">
         <div className="flex min-h-[520px] flex-col justify-between bg-soft p-8 lg:p-10">
           <div>
             <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-security/15 bg-white px-3 py-1.5 text-sm font-bold text-security">

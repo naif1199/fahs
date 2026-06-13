@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Prisma } from "@prisma/client";
+import { CriteriaActions } from "@/components/criteria-actions";
 import { CriteriaCreateModal } from "@/components/criteria-create-modal";
 import { Badge, Card, SecondaryButton, inputClass } from "@/components/ui";
 import { importanceLabel } from "@/lib/format";
@@ -58,7 +59,7 @@ export default async function CriteriaPage({ searchParams }: { searchParams: Pro
           {tabs.map((tab) => {
             const active = activeTab === tab.key;
             const count = tab.key === "all" ? sheetCounts.reduce((sum, item) => sum + item._count, 0) : countMap.get(tab.key) ?? 0;
-            return <Link key={tab.key} href={`/admin/criteria${qs({ ...params, tab: tab.key })}`} className={`rounded-2xl border px-4 py-2 text-sm font-normal text-black shadow-sm transition ${active ? "border-[#E9C46A] bg-[#E9C46A]/70 shadow-[0_10px_28px_rgba(233,196,106,.28)]" : "border-[#E9C46A]/40 bg-[#FFF8EB]/85 hover:border-[#E9C46A]/75 hover:bg-[#F4A261]/25"}`}>{tab.label} <span className="text-xs opacity-80">({count})</span></Link>;
+            return <Link key={tab.key} href={`/admin/criteria${qs({ ...params, tab: tab.key })}`} className={`rounded-2xl border px-4 py-2 text-sm font-normal text-black shadow-sm transition ${active ? "border-[#ee9b00] bg-[#ee9b00]/55 shadow-[0_10px_28px_rgba(238,155,0,.25)]" : "border-[#94d2bd]/55 bg-[#e9d8a6]/70 hover:border-[#0a9396]/60 hover:bg-[#94d2bd]/35"}`}>{tab.label} <span className="text-xs opacity-80">({count})</span></Link>;
           })}
         </div>
 
@@ -85,10 +86,10 @@ export default async function CriteriaPage({ searchParams }: { searchParams: Pro
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead><tr className="border-b text-muted"><th className="p-3 text-right">المصدر</th><th className="p-3 text-right">البند</th><th className="p-3 text-right">القسم</th><th className="p-3 text-right">نص المتطلب</th><th className="p-3 text-right">نوع المنشأة</th><th className="p-3 text-right">الحساسية</th><th className="p-3 text-right">الأهمية</th><th className="p-3 text-right">المرجع</th><th className="p-3 text-right">الحالة</th></tr></thead>
+            <thead><tr className="border-b text-muted"><th className="p-3 text-right">المصدر</th><th className="p-3 text-right">البند</th><th className="p-3 text-right">القسم</th><th className="p-3 text-right">نص المتطلب</th><th className="p-3 text-right">نوع المنشأة</th><th className="p-3 text-right">الحساسية</th><th className="p-3 text-right">الأهمية</th><th className="p-3 text-right">المرجع</th><th className="p-3 text-right">الحالة</th><th className="p-3 text-right">إجراءات</th></tr></thead>
             <tbody>
-              {items.map((item) => <tr key={item.id} className="border-b last:border-0"><td className="p-3 text-xs text-muted">{item.sourceSheet ?? "يدوي"}<br />{item.originalRowNumber ? `صف ${item.originalRowNumber}` : ""}</td><td className="p-3 font-black text-sand">{item.itemNumber}</td><td className="p-3">{item.mainSection}<br /><span className="text-xs text-muted">{item.subCategory}</span></td><td className="max-w-2xl p-3 leading-7">{item.requirementText}</td><td className="p-3">{item.facilityType?.name ?? "عام"}</td><td className="p-3">{item.sensitivityLevel}</td><td className="p-3"><Badge tone={item.importance === "HIGH" ? "danger" : item.importance === "MEDIUM" ? "warning" : "muted"}>{importanceLabel(item.importance)}</Badge></td><td className="p-3 text-xs text-muted">{item.regulatoryReference ?? "-"}<br />{item.articleNumber ?? ""}</td><td className="p-3"><Badge tone={item.isActive ? "success" : "muted"}>{item.isActive ? "مفعل" : "معطل"}</Badge></td></tr>)}
-              {!items.length ? <tr><td colSpan={9} className="p-8 text-center text-muted">لا توجد نتائج مطابقة للفلاتر الحالية.</td></tr> : null}
+              {items.map((item) => <tr key={item.id} className="border-b last:border-0"><td className="p-3 text-xs text-muted">{item.sourceSheet ?? "يدوي"}<br />{item.originalRowNumber ? `صف ${item.originalRowNumber}` : ""}</td><td className="p-3 font-black text-sand">{item.itemNumber}</td><td className="p-3">{item.mainSection}<br /><span className="text-xs text-muted">{item.subCategory}</span></td><td className="max-w-2xl p-3 leading-7">{item.requirementText}</td><td className="p-3">{item.facilityType?.name ?? "عام"}</td><td className="p-3">{item.sensitivityLevel}</td><td className="p-3"><Badge tone={item.importance === "HIGH" ? "danger" : item.importance === "MEDIUM" ? "warning" : "muted"}>{importanceLabel(item.importance)}</Badge></td><td className="p-3 text-xs text-muted">{item.regulatoryReference ?? "-"}<br />{item.articleNumber ?? ""}</td><td className="p-3"><Badge tone={item.isActive ? "success" : "muted"}>{item.isActive ? "مفعل" : "معطل"}</Badge></td><td className="p-3"><CriteriaActions item={item} facilityTypes={facilityTypes} /></td></tr>)}
+              {!items.length ? <tr><td colSpan={10} className="p-8 text-center text-muted">لا توجد نتائج مطابقة للفلاتر الحالية.</td></tr> : null}
             </tbody>
           </table>
         </div>

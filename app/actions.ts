@@ -175,6 +175,20 @@ export async function saveChecklistItem(formData: FormData) {
   revalidatePath("/admin/criteria");
 }
 
+export async function deleteChecklistItem(formData: FormData) {
+  const id = str(formData, "id");
+  const item = await prisma.checklistItem.findUnique({ where: { id }, include: { _count: { select: { responses: true } } } });
+  if (!item) return;
+  if (item._count.responses > 0) {
+    await prisma.checklistItem.update({ where: { id }, data: { isActive: false } });
+    await audit({ operationType: "تعطيل معيار", actorName: "مدير النظام", description: `تم تعطيل المعيار ${item.itemNumber} لارتباطه بتقارير سابقة` });
+  } else {
+    await prisma.checklistItem.delete({ where: { id } });
+    await audit({ operationType: "حذف معيار", actorName: "مدير النظام", description: `تم حذف المعيار ${item.itemNumber}` });
+  }
+  revalidatePath("/admin/criteria");
+}
+
 export async function saveSettings(formData: FormData) {
   for (const [key, value] of formData.entries()) {
     await prisma.systemSetting.upsert({ where: { key }, update: { value: String(value) }, create: { key, value: String(value) } });
