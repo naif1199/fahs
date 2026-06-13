@@ -13,7 +13,7 @@ export function CriteriaCreateModal({ facilityTypes }: { facilityTypes: Facility
       <Button type="button" onClick={() => setOpen(true)}>إضافة معيار</Button>
       {open ? (
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/55 p-4 backdrop-blur-sm">
-          <div className="app-card max-h-[90vh] w-full max-w-5xl overflow-y-auto rounded-[32px] border border-security/15 bg-[#e9d8a6]/95 p-6 shadow-[0_30px_110px_rgba(0,18,25,.30)]">
+          <div className="app-card max-h-[90vh] w-full max-w-5xl overflow-y-auto rounded-[32px] border border-security/15 bg-[#fefae0]/95 p-6 shadow-[0_30px_110px_rgba(40,54,24,.30)]">
             <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h2 className="text-2xl font-black text-official">إضافة معيار جديد</h2>
