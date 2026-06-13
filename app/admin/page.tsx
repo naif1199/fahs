@@ -57,7 +57,7 @@ export default async function InformationDashboard({ searchParams }: { searchPar
   const latestReports = filteredReports.slice(0, 10);
 
   return <div className="space-y-6">
-    <section className="rounded-xl border border-security/10 bg-white/85 p-5 shadow-[0_14px_36px_rgba(18,48,71,.06)]">
+    <section className="rounded-xl border border-security/15 bg-white/85 p-5 shadow-[0_14px_36px_rgba(38,70,83,.08)]">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
         <div><p className="text-sm font-bold text-security">الفاحص الذكي</p><h1 className="mt-1 text-2xl font-black text-official">لوحة المعلومات</h1><p className="mt-2 max-w-4xl text-sm leading-7 text-muted">نظرة تشغيلية شاملة على روابط الفحص، المهام، التقارير، الملاحظات، ومستوى الإنجاز.</p></div>
         <div className="flex flex-wrap gap-2"><SecondaryButton href={`/admin?${query}`} className="gap-2"><RefreshCw className="h-4 w-4" /> تحديث البيانات</SecondaryButton><Button href={`/api/admin/dashboard/export?${query}`} className="gap-2"><Download className="h-4 w-4" /> تصدير Excel</Button></div>
@@ -75,7 +75,7 @@ export default async function InformationDashboard({ searchParams }: { searchPar
     <Card className="border-security/20 p-5">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         <div><div className="mb-2 inline-flex items-center gap-2 rounded-full border border-security/15 bg-security/7 px-3 py-1 text-xs font-black text-security"><Link2 className="h-4 w-4" /> الإجراء الأساسي</div><h2 className="text-xl font-black text-official">توليد روابط نموذج الفاحص</h2><p className="mt-2 max-w-3xl text-sm leading-7 text-muted">أنشئ دفعة فحص، اختر الفاحصين، ثم حمّل مسودات البريد EML لإرسال روابط النماذج ورموز التحقق.</p></div>
-        <div className="flex flex-wrap gap-3"><Button href="/admin/weeks" className="px-5">توليد الروابط</Button><Button href="/admin/weeks" className="bg-official hover:bg-[#0d2538]">مسودات EML</Button></div>
+        <div className="flex flex-wrap gap-3"><Button href="/admin/weeks" className="px-5">توليد الروابط</Button><Button href="/admin/weeks" className="bg-official hover:bg-[#1D3540]">مسودات EML</Button></div>
       </div>
     </Card>
 
