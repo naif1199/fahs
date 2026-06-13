@@ -61,7 +61,7 @@ export default async function CriteriaPage({ searchParams }: { searchParams: Pro
           {tabs.map((tab) => {
             const active = activeTab === tab.key;
             const count = tab.key === "all" ? sheetCounts.reduce((sum, item) => sum + item._count, 0) : countMap.get(tab.key) ?? 0;
-            return <Link key={tab.key} href={`/admin/criteria${qs({ ...params, tab: tab.key })}`} className={`rounded-2xl border px-4 py-2 text-sm font-bold transition ${active ? "border-sand/50 bg-sand/20 text-white" : "border-white/12 bg-white/[0.055] text-muted hover:bg-white/10 hover:text-white"}`}>{tab.label} <span className="text-xs opacity-70">({count})</span></Link>;
+            return <Link key={tab.key} href={`/admin/criteria${qs({ ...params, tab: tab.key })}`} className={`rounded-2xl border px-4 py-2 text-sm font-bold shadow-sm transition ${active ? "border-[#EAD8AE] bg-[#D8C6A3] text-white shadow-[0_10px_28px_rgba(216,198,163,.22)]" : "border-[#D8C6A3]/35 bg-[#F7F1E6]/12 text-[#F4EAD7] hover:border-[#D8C6A3]/70 hover:bg-[#D8C6A3]/18 hover:text-white light:bg-white/80 light:text-[#123047] light:hover:bg-[#F7F1E6]"}`}>{tab.label} <span className="text-xs opacity-80">({count})</span></Link>;
           })}
         </div>
 
