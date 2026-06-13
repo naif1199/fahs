@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Prisma } from "@prisma/client";
 import { CriteriaCreateModal } from "@/components/criteria-create-modal";
-import { CriteriaImportPanel } from "@/components/criteria-import-panel";
 import { Badge, Card, SecondaryButton, inputClass } from "@/components/ui";
 import { importanceLabel } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
@@ -53,8 +52,6 @@ export default async function CriteriaPage({ searchParams }: { searchParams: Pro
         </div>
         <CriteriaCreateModal facilityTypes={facilityTypes} />
       </div>
-
-      <CriteriaImportPanel />
 
       <Card>
         <div className="mb-5 flex flex-wrap gap-2">
