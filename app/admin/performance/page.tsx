@@ -24,17 +24,13 @@ export default async function InspectorPerformancePage({ searchParams }: { searc
       <div className="flex items-end gap-2 md:col-span-2"><Button className="gap-2"><Search className="h-4 w-4" /> تطبيق الفلاتر</Button><SecondaryButton href="/admin/performance">إعادة ضبط</SecondaryButton></div>
     </form></Card>
 
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-      <Kpi label="إجمالي الفاحصين النشطين" value={context.totals.activeInspectors} />
-      <Kpi label="إجمالي المهام المخصصة" value={context.totals.assignedTasks} />
-      <Kpi label="إجمالي المهام المكتملة" value={context.totals.completedTasks} tone="success" />
-      <Kpi label="إجمالي المهام المتأخرة" value={context.totals.lateTasks} tone="danger" />
+    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+      <Kpi label="الفاحصون النشطون" value={context.totals.activeInspectors} />
+      <Kpi label="المهام المخصصة" value={context.totals.assignedTasks} />
+      <Kpi label="المهام المكتملة" value={context.totals.completedTasks} tone="success" />
       <Kpi label="نسبة الإنجاز العامة" value={pct(context.totals.completionRate)} tone="success" />
-      <Kpi label="متوسط نسبة المطابقة" value={pct(context.totals.avgCompliance)} />
-      <Kpi label="متوسط الملاحظات لكل تقرير" value={context.totals.avgNotes} tone="warning" />
-      <Kpi label="متوسط زمن إصدار التقرير" value={`${context.totals.avgReportIssueHours} ساعة`} />
-      <Kpi label="التقارير المعتمدة" value={context.totals.approvedReports} tone="success" />
-      <Kpi label="التقارير غير المكتملة" value={context.totals.incompleteReports} tone="warning" />
+      <Kpi label="متوسط المطابقة" value={pct(context.totals.avgCompliance)} />
+      <Kpi label="متوسط إصدار التقرير" value={`${context.totals.avgReportIssueHours} ساعة`} tone="warning" />
     </div>
 
     <div className="grid gap-6 xl:grid-cols-6">
@@ -52,6 +48,6 @@ export default async function InspectorPerformancePage({ searchParams }: { searc
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) { return <label className="block"><span className="mb-2 block text-sm font-bold text-official">{label}</span>{children}</label>; }
 function Select({ label, name, value, options }: { label: string; name: string; value?: string; options: [string, string][] }) { return <Field label={label}><select name={name} defaultValue={value ?? ""} className={inputClass}>{options.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></Field>; }
-function Kpi({ label, value, tone = "security" }: { label: string; value: string | number; tone?: "security" | "success" | "warning" | "danger" }) { const colors = { security: "text-security border-security/15 bg-security/7", success: "text-success border-success/20 bg-success/10", warning: "text-warning border-warning/20 bg-warning/10", danger: "text-danger border-danger/20 bg-danger/10" }; return <Card className="p-4"><div className="text-sm font-bold text-muted">{label}</div><div className={`mt-3 inline-flex rounded-lg border px-3 py-2 text-base font-black ${colors[tone]}`}>{value}</div></Card>; }
+function Kpi({ label, value, tone = "security" }: { label: string; value: string | number; tone?: "security" | "success" | "warning" | "danger" }) { const colors = { security: "from-security/18 text-security border-security/15", success: "from-success/18 text-success border-success/20", warning: "from-warning/20 text-warning border-warning/20", danger: "from-danger/18 text-danger border-danger/20" }; return <Card className={`relative overflow-hidden border p-3.5 ${colors[tone]}`}><div className="absolute inset-y-3 right-0 w-1 rounded-l-full bg-current opacity-70" /><div className="flex min-h-11 items-center justify-between gap-4 pr-3"><div className="text-sm text-muted">{label}</div><div className={`rounded-2xl bg-gradient-to-l px-3 py-1.5 text-lg font-black shadow-sm backdrop-blur ${colors[tone]}`}>{value}</div></div></Card>; }
 function ChartCard({ title, icon: Icon, children, className }: { title: string; icon: typeof BarChart3; children: React.ReactNode; className?: string }) { return <Card className={className}><div className="mb-4 flex items-center gap-3"><span className="grid h-9 w-9 place-items-center rounded-lg bg-security/10 text-security"><Icon className="h-5 w-5" /></span><h2 className="text-base font-black text-official">{title}</h2></div>{children}</Card>; }
 function cleanParams(filters: PerformanceFilters) { return Object.fromEntries(Object.entries(filters).filter(([, v]) => v)); }

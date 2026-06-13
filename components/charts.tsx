@@ -31,7 +31,7 @@ export function BarsChart({ data }: { data: ChartDatum[] }) {
 
 export function RadarDotsChart({ data }: { data: ChartDatum[] }) {
   const chartData = [...data].sort((a, b) => b.value - a.value).slice(0, 8).map((item) => ({ ...item, name: shortName(item.name) }));
-  return <ChartFrame height={360} minWidth={620}><RadarChart data={chartData} margin={{ left: 18, right: 18, top: 18, bottom: 18 }}><PolarGrid gridType="polygon" stroke="rgba(38,70,83,.16)" /><PolarAngleAxis dataKey="name" tick={{ ...axis, fontSize: 12 }} /><PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} axisLine={false} /><Tooltip contentStyle={tooltip} labelFormatter={(label, items) => items?.[0]?.payload?.fullName ?? label} formatter={(value) => [`${value}%`, "جودة التوثيق"]} /><Radar dataKey="value" stroke="#2A9D8F" fill="#2A9D8F" fillOpacity={0.22} strokeWidth={3} dot={{ r: 4, fill: "#E9C46A", stroke: "#264653", strokeWidth: 1.5 }} /></RadarChart></ChartFrame>;
+  return <ChartFrame height={360} scroll={false}><RadarChart data={chartData} margin={{ left: 18, right: 18, top: 18, bottom: 18 }}><PolarGrid gridType="polygon" stroke="rgba(38,70,83,.16)" /><PolarAngleAxis dataKey="name" tick={{ ...axis, fontSize: 12 }} /><PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} axisLine={false} /><Tooltip contentStyle={tooltip} labelFormatter={(label, items) => items?.[0]?.payload?.fullName ?? label} formatter={(value) => [`${value}%`, "جودة التوثيق"]} /><Radar dataKey="value" stroke="#2A9D8F" fill="#2A9D8F" fillOpacity={0.22} strokeWidth={3} dot={{ r: 4, fill: "#E9C46A", stroke: "#264653", strokeWidth: 1.5 }} /></RadarChart></ChartFrame>;
 }
 
 export function ActiveDonutChart({ data }: { data: ChartDatum[] }) {
@@ -55,8 +55,8 @@ export function LineTrendChart({ data }: { data: ChartDatum[] }) {
   return <ChartFrame minWidth={560}><LineChart data={data} margin={{ left: 10, right: 18, top: 18, bottom: 20 }}><CartesianGrid strokeDasharray="4 4" vertical={false} stroke="rgba(38,70,83,.12)" /><XAxis dataKey="name" tick={axis} tickLine={false} axisLine={false} tickMargin={10} tickFormatter={shortName} /><YAxis tick={axis} tickLine={false} axisLine={false} width={40} domain={[0, 100]} /><Tooltip contentStyle={tooltip} /><Line type="monotone" dataKey="value" stroke="#2A9D8F" strokeWidth={3} dot={{ r: 4, fill: "#2A9D8F" }} /></LineChart></ChartFrame>;
 }
 
-function ChartFrame({ children, height = 306, minWidth = 520 }: { children: React.ReactElement; height?: number; minWidth?: number }) {
-  return <div className="overflow-x-auto rounded-lg bg-soft/70 p-3" style={{ height }}><div style={{ minWidth, height: "100%" }}><ResponsiveContainer width="100%" height="100%">{children}</ResponsiveContainer></div></div>;
+function ChartFrame({ children, height = 306, minWidth = 520, scroll = true }: { children: React.ReactElement; height?: number; minWidth?: number; scroll?: boolean }) {
+  return <div className={`${scroll ? "overflow-x-auto" : "overflow-hidden"} rounded-lg bg-soft/70 p-3`} style={{ height }}><div style={{ minWidth: scroll ? minWidth : "100%", height: "100%" }}><ResponsiveContainer width="100%" height="100%">{children}</ResponsiveContainer></div></div>;
 }
 
 function shortName(value: unknown) {
