@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AlertTriangle, BarChart3, Download, FileText, LineChart, RotateCcw, Search, Users } from "lucide-react";
+import { AlertTriangle, BarChart3, FileText, LineChart, Search, Users } from "lucide-react";
 import { Badge, Button, Card, SecondaryButton, inputClass } from "@/components/ui";
 import { BarsChart, DonutChart, HorizontalBarsChart } from "@/components/charts";
 import { arDateTime, pct, taskStatusLabel } from "@/lib/format";
@@ -8,14 +8,8 @@ import { getPerformanceContext, PerformanceFilters } from "@/lib/performance";
 export default async function InspectorPerformancePage({ searchParams }: { searchParams: Promise<PerformanceFilters> }) {
   const filters = await searchParams;
   const context = await getPerformanceContext(filters);
-  const exportQuery = new URLSearchParams(cleanParams(filters)).toString();
 
   return <div className="space-y-6">
-    <div className="flex flex-col justify-between gap-4 rounded-xl border border-security/10 bg-white/85 p-5 shadow-[0_14px_36px_rgba(18,48,71,.06)] xl:flex-row xl:items-end">
-      <div><p className="text-sm font-bold text-security">مؤشرات أداء الفاحصين</p><h1 className="mt-1 text-2xl font-black text-official">لوحة قياس أداء الفاحصين</h1><p className="mt-2 max-w-4xl text-sm leading-7 text-muted">قياس أسبوعي وشهري للإنتاجية، جودة التوثيق، الالتزام التشغيلي، والفاعلية الرقابية بناءً على بيانات المهام والتقارير والملاحظات والمرفقات.</p></div>
-      <div className="flex flex-wrap gap-3"><Button href={`/api/admin/performance/export?${exportQuery}`}>تصدير Excel</Button><SecondaryButton href="/admin/performance" className="gap-2"><RotateCcw className="h-4 w-4" /> إعادة ضبط</SecondaryButton></div>
-    </div>
-
     <Card><form className="grid gap-3 md:grid-cols-4 xl:grid-cols-8">
       <Select name="period" label="الفترة الزمنية" value={filters.period} options={[["", "كل الفترات"], ["week", "آخر 7 أيام"], ["month", "آخر 30 يوم"]]} />
       <Select name="weekId" label="دفعة الفحص" value={filters.weekId} options={[["", "كل الدفعات"], ...context.weeks.filter((w) => w.links.length > 0).map((w) => [w.id, w.name] as [string, string])]} />
@@ -46,8 +40,8 @@ export default async function InspectorPerformancePage({ searchParams }: { searc
     <div className="grid gap-6 xl:grid-cols-3">
       <ChartCard title="مقارنة أداء الفاحصين" icon={BarChart3}><BarsChart data={context.charts.overall} /></ChartCard>
       <ChartCard title="توزيع حالات المهام" icon={FileText}><DonutChart data={context.charts.taskStatus} /></ChartCard>
-      <ChartCard title="أعلى جودة توثيق" icon={LineChart}><HorizontalBarsChart data={context.charts.documentation} /></ChartCard>
-      <ChartCard title="أكثر الفاحصين إنجازًا" icon={Users}><HorizontalBarsChart data={context.charts.productivity} /></ChartCard>
+      <ChartCard title="أعلى جودة توثيق" icon={LineChart}><HorizontalBarsChart data={context.charts.documentation} percent /></ChartCard>
+      <ChartCard title="أكثر الفاحصين إنجازًا" icon={Users}><HorizontalBarsChart data={context.charts.productivity} percent /></ChartCard>
       <ChartCard title="متوسط زمن إنجاز التقرير" icon={LineChart}><HorizontalBarsChart data={context.charts.reportHours} /></ChartCard>
       <Card><div className="mb-4 flex items-center gap-3"><span className="grid h-9 w-9 place-items-center rounded-lg bg-warning/10 text-warning"><AlertTriangle className="h-5 w-5" /></span><h2 className="text-base font-black text-official">تنبيهات الأداء</h2></div><div className="grid gap-2">{context.alerts.length ? context.alerts.map((alert, i) => <div key={i} className="rounded-lg border border-slate-200 bg-soft p-3"><Badge tone={alert.tone}>{alert.title}</Badge><p className="mt-2 text-sm text-muted">{alert.text}</p></div>) : <p className="text-sm text-muted">لا توجد تنبيهات أداء حاليًا.</p>}</div></Card>
     </div>

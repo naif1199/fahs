@@ -1,6 +1,6 @@
 import { saveSettings } from "@/app/actions";
 import { CriteriaImportPanel } from "@/components/criteria-import-panel";
-import { Button, Card, Field, inputClass } from "@/components/ui";
+import { Button, Card, Field, SecondaryButton, inputClass } from "@/components/ui";
 import { prisma } from "@/lib/prisma";
 
 export default async function SettingsPage() {
@@ -13,6 +13,20 @@ export default async function SettingsPage() {
       </div>
 
       <CriteriaImportPanel />
+
+      <Card>
+        <div className="flex flex-col justify-between gap-4 xl:flex-row xl:items-center">
+          <div>
+            <p className="text-sm text-security">مؤشرات أداء الفاحصين</p>
+            <h2 className="mt-1 text-2xl text-official">لوحة قياس أداء الفاحصين</h2>
+            <p className="mt-2 max-w-4xl text-sm leading-7 text-muted">قياس أسبوعي وشهري للإنتاجية، جودة التوثيق، الالتزام التشغيلي، والفاعلية الرقابية بناءً على بيانات المهام والتقارير والملاحظات والمرفقات.</p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <Button href="/api/admin/performance/export">تصدير Excel</Button>
+            <SecondaryButton href="/admin/performance">فتح لوحة الأداء</SecondaryButton>
+          </div>
+        </div>
+      </Card>
 
       <Card>
         <form action={saveSettings} className="grid gap-4 md:grid-cols-2">
