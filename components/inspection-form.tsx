@@ -20,6 +20,14 @@ export function InspectionForm({ token, task, report, facilityTypes, checklistIt
 
   const selectedType = facilityTypes.find((t) => t.id === facilityTypeId);
   const visibleItems = useMemo(() => checklistItems.filter((i) => (!i.facilityTypeId || i.facilityTypeId === facilityTypeId) && (i.sensitivityLevel === sensitivity || sensitivity === "عالية")), [checklistItems, facilityTypeId, sensitivity]);
+  const sections = useMemo(() => {
+    const grouped = new Map<string, FormItem[]>();
+    visibleItems.forEach((item) => {
+      const key = item.sourceSheet || item.mainSection || "معايير الفحص";
+      grouped.set(key, [...(grouped.get(key) ?? []), item]);
+    });
+    return [...grouped.entries()].map(([title, items], index) => ({ title: `${index + 2}: ${title}`, items }));
+  }, [visibleItems]);
   const nonCompliant = visibleItems.filter((i) => responses[i.id]?.status === "NON_COMPLIANT");
   const compliantCount = visibleItems.filter((i) => responses[i.id]?.status === "COMPLIANT").length;
   const totalAnswered = compliantCount + nonCompliant.length;
@@ -71,10 +79,7 @@ export function InspectionForm({ token, task, report, facilityTypes, checklistIt
             </div>
           </Card>
 
-          <ChecklistSection title="ثانيًا: المواصفات الفنية" items={visibleItems.filter((i) => i.mainSection.includes("المواصفات"))} responses={responses} update={update} />
-          <ChecklistSection title="ثالثًا: الضوابط التشغيلية" items={visibleItems.filter((i) => i.mainSection.includes("الضوابط"))} responses={responses} update={update} />
-          <ChecklistSection title="رابعًا: تصنيف المنشآت" items={visibleItems.filter((i) => i.mainSection.includes("تصنيف المنشآت") || i.sourceSheet?.includes("تصنيف المنشآت"))} responses={responses} update={update} />
-          <ChecklistSection title="خامسًا: الملاحق والتصنيفات الأمنية" items={visibleItems.filter((i) => i.mainSection.includes("الملاحق"))} responses={responses} update={update} />
+          {sections.map((section) => <ChecklistSection key={section.title} title={section.title} items={section.items} responses={responses} update={update} />)}
 
           <Card>
             <h2 className="mb-4 text-xl font-black text-official">سادسًا: الملاحظات التلقائية</h2>
@@ -91,6 +96,7 @@ export function InspectionForm({ token, task, report, facilityTypes, checklistIt
               <SecondaryButton href={`/reports/${report.id}`}>تصدير PDF / طباعة التقرير</SecondaryButton>
               {message ? <span className="self-center text-sm font-bold text-security">{message}</span> : null}
               {isPending ? <span className="self-center text-sm text-muted">جار الحفظ...</span> : null}
+              {!completed ? <span className="self-center text-sm text-muted">اعتماد هذا الفحص يتطلب إكمال بنود هذه المهمة فقط.</span> : null}
             </div>
           </Card>
         </form>
