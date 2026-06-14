@@ -73,7 +73,8 @@ export function InspectionForm({ token, task, report, facilityTypes, checklistIt
 
           <ChecklistSection title="ثانيًا: المواصفات الفنية" items={visibleItems.filter((i) => i.mainSection.includes("المواصفات"))} responses={responses} update={update} />
           <ChecklistSection title="ثالثًا: الضوابط التشغيلية" items={visibleItems.filter((i) => i.mainSection.includes("الضوابط"))} responses={responses} update={update} />
-          <ChecklistSection title="رابعًا: الملاحق والتصنيفات الأمنية" items={visibleItems.filter((i) => i.mainSection.includes("الملاحق"))} responses={responses} update={update} />
+          <ChecklistSection title="رابعًا: تصنيف المنشآت" items={visibleItems.filter((i) => i.mainSection.includes("تصنيف المنشآت") || i.sourceSheet?.includes("تصنيف المنشآت"))} responses={responses} update={update} />
+          <ChecklistSection title="خامسًا: الملاحق والتصنيفات الأمنية" items={visibleItems.filter((i) => i.mainSection.includes("الملاحق"))} responses={responses} update={update} />
 
           <Card>
             <h2 className="mb-4 text-xl font-black text-official">سادسًا: الملاحظات التلقائية</h2>
@@ -86,7 +87,7 @@ export function InspectionForm({ token, task, report, facilityTypes, checklistIt
             <div className="flex flex-wrap gap-3">
               <Button type="submit">حفظ كمسودة</Button>
               <button type="submit" className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-security/20 bg-white px-5 py-2.5 text-sm font-bold text-security">استكمال لاحقًا</button>
-              <button type="button" className="inline-flex min-h-11 items-center rounded-2xl bg-success px-5 py-2.5 text-sm font-bold text-white disabled:opacity-40" onClick={(e) => { const form = e.currentTarget.closest("form"); if (form) startTransition(() => submit(new FormData(form), true)); }} disabled={!completed}>اعتماد التقرير</button>
+               <button type="button" className="inline-flex min-h-11 items-center rounded-2xl bg-success px-5 py-2.5 text-sm font-bold text-white disabled:opacity-40" onClick={(e) => { const form = e.currentTarget.closest("form"); if (form) startTransition(() => submit(new FormData(form), true)); }} disabled={!completed}>اعتماد هذا الفحص</button>
               <SecondaryButton href={`/reports/${report.id}`}>تصدير PDF / طباعة التقرير</SecondaryButton>
               {message ? <span className="self-center text-sm font-bold text-security">{message}</span> : null}
               {isPending ? <span className="self-center text-sm text-muted">جار الحفظ...</span> : null}
@@ -95,7 +96,7 @@ export function InspectionForm({ token, task, report, facilityTypes, checklistIt
         </form>
 
         <aside className="xl:sticky xl:top-8 xl:self-start">
-          <Card className="print-card"><h2 className="text-xl font-black text-official">ملخص الفحص</h2><div className="mt-5 grid gap-3 text-sm"><Summary label="إجمالي البنود" value={visibleItems.length} /><Summary label="عدد البنود المطابقة" value={compliantCount} /><Summary label="عدد البنود غير المطابقة" value={nonCompliant.length} /><Summary label="نسبة المطابقة" value={`${complianceRate}%`} /><Summary label="عدد الملاحظات" value={nonCompliant.length} /><Summary label="ملاحظات عالية الأهمية" value={nonCompliant.filter((i) => i.importance === "HIGH").length} /><Summary label="حالة النموذج" value={completed ? "مكتمل" : totalAnswered ? "قيد العمل" : "غير مكتمل"} /><Summary label="البنود المتبقية" value={visibleItems.length - totalAnswered} /></div></Card>
+          <Card className="print-card"><h2 className="text-xl font-black text-official">ملخص هذا الفحص</h2><p className="mt-2 text-sm text-muted">كل مهمة تصدر تقريرًا مستقلًا وتعتمد منفصلة عن بقية المهام.</p><div className="mt-5 grid gap-3 text-sm"><Summary label="إجمالي البنود" value={visibleItems.length} /><Summary label="عدد البنود المطابقة" value={compliantCount} /><Summary label="عدد البنود غير المطابقة" value={nonCompliant.length} /><Summary label="نسبة المطابقة" value={`${complianceRate}%`} /><Summary label="عدد الملاحظات" value={nonCompliant.length} /><Summary label="ملاحظات عالية الأهمية" value={nonCompliant.filter((i) => i.importance === "HIGH").length} /><Summary label="حالة النموذج" value={completed ? "مكتمل" : totalAnswered ? "قيد العمل" : "غير مكتمل"} /><Summary label="البنود المتبقية" value={visibleItems.length - totalAnswered} /></div></Card>
         </aside>
       </div>
     </main>
